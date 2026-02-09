@@ -1,41 +1,36 @@
-name: Publish 
+name: Deploy to Azure
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
 
 env:
   AZURE_WEBAPP_NAME: current-time-service-mapis1
-  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
 
-jobs: 
+jobs:
   publish:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x' 
+          dotnet-version: '6.0.x'
 
       - name: Restore
-        run: dotnet restore ./CurrentTimeService.sln
+        run: dotnet restore
 
-      - name: Build 
-        run: dotnet build ./CurrentTimeService.sln --configuration Release --no-restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
       - name: Publish
+        # Forzamos la publicación a la carpeta 'publish'
         run: dotnet publish -c Release -o ./publish
-      
+
       - name: Deployment
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_MAPIS1 }}
           package: ./publish
-     
