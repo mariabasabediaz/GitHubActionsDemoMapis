@@ -16,7 +16,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '8.0.x' # <--- Actualizado a la versión 8
 
       - name: Restore
         run: dotnet restore
@@ -25,7 +25,6 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Publish
-        # Forzamos la publicación a la carpeta 'publish'
         run: dotnet publish -c Release -o ./publish
 
       - name: Deployment
